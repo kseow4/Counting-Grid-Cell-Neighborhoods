@@ -1,0 +1,15 @@
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\bin\Debug\net9.0\CountingGridCellNeighbors.exe
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\bin\Debug\net9.0\CountingGridCellNeighbors.deps.json
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\bin\Debug\net9.0\CountingGridCellNeighbors.runtimeconfig.json
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\bin\Debug\net9.0\CountingGridCellNeighbors.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\bin\Debug\net9.0\CountingGridCellNeighbors.pdb
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.AssemblyInfoInputs.cache
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.AssemblyInfo.cs
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.csproj.CoreCompileInputs.cache
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.sourcelink.json
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\refint\CountingGridCellNeighbors.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.pdb
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\CountingGridCellNeighbors.genruntimeconfig.cache
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\CountingGridCellNeighbors\obj\Debug\net9.0\ref\CountingGridCellNeighbors.dll

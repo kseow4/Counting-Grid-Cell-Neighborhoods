@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CountingGridCellNeighbors")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a2b0dbff131082f8137e5a51be2044cb316c3db9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+302c36393bde9aa3fb17ca61149015551550feb4")]
 [assembly: System.Reflection.AssemblyProductAttribute("CountingGridCellNeighbors")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CountingGridCellNeighbors")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

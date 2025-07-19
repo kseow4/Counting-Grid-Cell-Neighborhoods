@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "YmUBLEnE4aU=",
+  "dgSpecHash": "1JYWv/8khxs=",
   "success": true,
   "projectFilePath": "C:\\Users\\Kyle Seow\\source\\repos\\Counting-Grid-Cell-Neighborhoods\\GridViewerCLI\\GridViewerCLI.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Kyle Seow\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.7\\microsoft.win32.systemevents.9.0.7.nupkg.sha512",
+    "C:\\Users\\Kyle Seow\\.nuget\\packages\\system.drawing.common\\9.0.7\\system.drawing.common.9.0.7.nupkg.sha512"
+  ],
   "logs": []
 }

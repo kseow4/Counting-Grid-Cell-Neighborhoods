@@ -20,3 +20,7 @@ C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\o
 C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\obj\Debug\net9.0\GridViewerCLI.pdb
 C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\obj\Debug\net9.0\GridViewerCLI.genruntimeconfig.cache
 C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\obj\Debug\net9.0\ref\GridViewerCLI.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\bin\Debug\net9.0\System.Drawing.Common.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\bin\Debug\net9.0\System.Private.Windows.Core.dll
+C:\Users\Kyle Seow\source\repos\Counting-Grid-Cell-Neighborhoods\GridViewerCLI\bin\Debug\net9.0\runtimes\win\lib\net9.0\Microsoft.Win32.SystemEvents.dll

@@ -1,27 +1,15 @@
 
 
-
-
 const H = 11;
 const W = 11;
 const N = 3;
-
-const SAMPLE = `░ ▒ ▓ █ ⧆ ⧈ □ ■ ⬚ ⬛ ⬜ ◼ ⯐ ☐ ☒ ☑ ⏹ ⯀ 〼 ▩ ⛋ ﹎ ﹊`;
-
-// const HIT = `█`;
-// const HIT = `◼`;
 const HIT = `▩`;
 const NEIGHBOR = `☒`;
 const MISS = `☐`;
 
-const VBP = `║`;
-const TLC = `╔`;
-const BLC = `╚`;
-const HBP = `═`;
-const TRC = `╗`;
-const BRC = `╝`;
-
- 
+ /**
+  * Cell Class to contain a signed numeric value and the neighbor flag.
+  */
 class Cell {
    constructor(value = -1, isNeighbor = false) {
       this.value = value;
@@ -33,11 +21,55 @@ class Cell {
 /**
  * Calculates the Manhattan Distance value between two cell coordinates.
  * 
- * @param {Cell} from 
- * @param {Cell} to 
+ * @param {*} y1 
+ * @param {*} x1 
+ * @param {*} y2 
+ * @param {*} x2 
  * @returns {number} The sum of the differences in the two dimensions (Y, X) from the given Cells.
  */
-const ManhattanDistance = (fromY, fromX, toY, toX) => Math.abs(fromY - toY) + Math.abs(fromX - toX);
+const ManhattanDistance = (y1, x1, y2, x2) => Math.abs(y1 - y2) + Math.abs(x1 - x2);
+
+/**
+ * 
+ * @param {*} y1 
+ * @param {*} x1 
+ * @param {*} y2 
+ * @param {*} x2 
+ * @param {*} h 
+ * @param {*} w 
+ * @returns 
+ */
+const ManhattanDistanceWrapped = (y1, x1, y2, x2, h, w) => 
+   Math.min(Math.abs(y1 - y2), h - Math.abs(y1 - y2)) +
+   Math.min(Math.abs(x1 - x2), w - Math.abs(x1 - x2));
+
+/**
+ * 
+ * @param {*} y1 
+ * @param {*} x1 
+ * @param {*} y2 
+ * @param {*} x2 
+ * @param {*} h 
+ * @param {*} w 
+ * @returns 
+ */
+const EuclideanDistanceWrapped = (y1, x1, y2, x2, h, w) => Math.sqrt(
+   Math.pow(Math.min(Math.abs(y1 - y2), h - Math.abs(y1 - y2)), 2) +
+   Math.pow(Math.min(Math.abs(x1 - x2), w - Math.abs(x1 - x2)), 2));
+ 
+/**
+ * 
+ * @param {*} y1 
+ * @param {*} x1 
+ * @param {*} y2 
+ * @param {*} x2 
+ * @param {*} h 
+ * @param {*} w 
+ * @returns 
+ */
+const ChebyshevDistanceWrapped = (y1, x1, y2, x2, h, w) => Math.max(
+   Math.min(Math.abs(y1 - y2), h - Math.abs(y1 - y2)),
+   Math.min(Math.abs(x1 - x2), w - Math.abs(x1 - x2)));
 
 /**
  * Creates a 2D Array of Cell objects given a 2D Array of numbers.
@@ -48,12 +80,12 @@ const ManhattanDistance = (fromY, fromX, toY, toX) => Math.abs(fromY - toY) + Ma
 function makeCells(matrix) {
    try {
       let moc = [];
-      let same_length = matrix[0].length;
-      matrix.forEach((row, y) => { 
+      let same_length;
+      matrix.forEach(row => {
+         if (!same_length) { same_length = row.length; }
          if (same_length != row.length) throw `Invalid Matrix!\nRow [${matrix.indexOf(row)}] is inconsistent in length.`;
          let roc = [];
-         row.forEach((cell, x) => {
-            // roc.push(new Cell(cell, x, y));
+         row.forEach(cell => {
             roc.push(new Cell(cell));
          });
          moc.push(roc);
@@ -71,16 +103,25 @@ function makeCells(matrix) {
  */
 const RandomValueGenerator = (min = Number.MIN_SAFE_INTEGER, max = Number.MAX_SAFE_INTEGER) => Math.random() * (max - min) + min;
 
- 
 /**
  * 
- * @param {number} height 
- * @param {number} width 
- * @returns {}
+ * @param {*} index 
+ * @param {*} size 
+ * @returns 
  */
-function MatrixGenerator(height, width, positives) { 
+const wrap = (index, size) => (index + size) % size;
+ 
+/**
+ * Generates a neighborhood with the given height and width - and allows for specification on how many positive cells
+ * 
+ * @param {*} height 
+ * @param {*} width 
+ * @param {*} positives 
+ * @returns a 2D array 
+ */
+function NeighborhoodGenerator(height, width, positives) { 
    try {
-      let matrix = Array.from({ length: height }, () => (Array.from({ length: width }, () => positives ? new Cell() : new Cell(RandomValueGenerator()))));
+      let neighborhood = Array.from({ length: height }, () => (Array.from({ length: width }, () => positives ? new Cell() : new Cell(RandomValueGenerator()))));
 
       switch(typeof positives) {
          case 'object':
@@ -88,7 +129,7 @@ function MatrixGenerator(height, width, positives) {
                positives.forEach(cell => { 
                   if (cell.y > height || cell.y < 0 || !Number.isInteger(cell.y)) throw `Cell (${cell.y}, ${cell.x}) has an invalid Y value: ${cell.y}.`;
                   if (cell.x > width || cell.x < 0 || !Number.isInteger(cell.x)) throw `Cell (${cell.y}, ${cell.x}) has an invalid X value: ${cell.x}.`;
-                  matrix[cell.y][cell.x].value = Math.abs(matrix[cell.y][cell.x].value);
+                  neighborhood[cell.y][cell.x].value = Math.abs(neighborhood[cell.y][cell.x].value);
                });
             }
             break;
@@ -105,7 +146,7 @@ function MatrixGenerator(height, width, positives) {
                      break;
                   }
                }
-               matrix[y][x].value = Math.abs(matrix[y][x].value);
+               neighborhood[y][x].value = Math.abs(neighborhood[y][x].value);
             }
             break;
 
@@ -114,239 +155,164 @@ function MatrixGenerator(height, width, positives) {
 
       }
 
-      return matrix; 
+      return neighborhood; 
    } catch (e) { console.error(e); }
 };
 
+/**
+ * Finds the number of neighbors of a given neighborhood
+ * 
+ * @param {*} neighborhood 
+ * @param {*} n 
+ * @returns Neighbhorhood count
+ */
+function FindNeighbors(neighborhood, {n = N, distanceType = "m", print = true}) {
+   // let positiveCells = []; 
+   const height = neighborhood.length;
+   const width = neighborhood[0].length;
+   let neighborhoodCount = 0; 
+
+   let distanceFunc;
+   switch (distanceType.toLowerCase()) {
+      case "m":
+      case "manhattan":
+         distanceFunc = ManhattanDistanceWrapped;
+         break;
+      case "e":
+      case "euclidean":
+         distanceFunc = EuclideanDistanceWrapped;
+         break;
+      case "c":
+      case "chebyshev":
+         distanceFunc = ChebyshevDistanceWrapped;
+         break;
+      default:
+         distanceFunc = ManhattanDistanceWrapped;
+         break;
+   }
+
+   /**
+    * 
+    * 
+    * @param {number} y 
+    * @param {number} x 
+    * @returns {number} The number of neighboring cells.
+    */
+   // const find = (y, x) => {
+   //    let neighborCount = 0;
+   //    let boundaryY = { min: y - n < 0 ? 0 : y - n, max: y + n >= neighborhood.length ? neighborhood.length : y + n + 1};
+
+   //    for (let nY = boundaryY.min; nY < boundaryY.max; nY++) {
+   //       console.log("nY", nY)
+
+   //       let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n >= neighborhood[nY].length ? neighborhood[nY].length : x + n + 1 };
+   //       let xmax = (x + n) - neighborhood[nY].length;
+   //       // console.log("xmax", xmax)
+         
+   //       let xmin = (x - n) + neighborhood[nY].length; 
+   //       // console.log("xmin", xmin)
+         
+
+   //       for (let nX = boundaryX.min; nX < boundaryX.max; nX++) {
+   //          let neighborCell = neighborhood[nY][nX];
+   //          if (ManhattanDistance(y, x, nY, nX) <= n && !neighborCell.isNeighbor) {
+   //             neighborCell.isNeighbor = true;
+   //             neighborCount++;
+   //          }
+   //       }
+   //       // for (let nX = 0; nX < xmax; nX++) {
+   //       //    let neighborCell = neighborhood[nY][nX];
+   //       //    if (ManhattanDistance(y, x, nY, nX) <= n && !neighborCell.isNeighbor) {
+   //       //       neighborCell.isNeighbor = true;
+   //       //       neighborCount++;
+   //       //    }
+   //       // }
+   //       for (let nX = xmin; nX < neighborhood[nY].length ; nX++) {
+   //          // let neighborCell = neighborhood[nY][nX];
+   //          let wrappedY = wrap(nY, neighborhood.length);
+   //          let wrappedX = wrap(nX, neighborhood[0].length);
+   //          let neighborCell = neighborhood[wrappedY][wrappedX];
+
+   //          console.log("xmin", xmin)
+   //          console.log("row", nY)
+   //          console.log("manhattan", ManhattanDistance(y, x, nY, nX))
+
+
+   //          console.log("MD", ManhattanDistance(y, x, nY, nX) + n)
+   //          if (ManhattanDistance(y, x, nY, nX) && !neighborCell.isNeighbor) {
+   //             neighborCell.isNeighbor = true;
+   //             neighborCount++;
+   //          }
+   //       }
+
+   //    }
 
 
 
-// class Matrix {
-//    constructor({ h, w, matrix } = { h: H, w: W, matrix: null }) {  
-//       try {
-//          if (!matrix instanceof Array) throw ``;
-
-//       } catch (e) { console.error(e); }
-
-//       this.grid = matrix ?? MatrixGenerator(h, w); 
-//       this.height = this.grid.length;
-//       this.width =  this.grid[0].length;  
-      
-//    };
-
-//    findNeighborsWrapping = (cell, n = N) => {
-     
-//       let neighborCount = 0;
-//       let boundaryY = { min: cell.y - n < 0 ? 0 : cell.y - n, max: cell.y + n > this.height ? this.height : cell.y + n };
-//       let boundaryX = { min: cell.x - n < 0 ? 0 : cell.x - n, max: cell.x + n > this.width ? this.width : cell.x + n };
-      
-//       let ymin = this.height + cell.y + 1
-
-//       for (let y = boundaryY.min; y <= boundaryY.max; y++) {
-//          for (let x = boundaryX.min; x <= boundaryX.max; x++) {
-//             let neighborCell = this.grid[y][x];
-
-       
-//          }
-//       }
-
-
-//    };
-
-//    findNeighbors = (matrix, y, x, n) => {
-      
-//       let neighborCount = 0;
-//       let boundaryY = { min: y - n < 0 ? 0 : y - n, max: y + n > this.height ? this.height : y + n };
-//       let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n > this.width ? this.width : x + n };
-      
-
-
-//       for (let nY = boundaryY.min; nY <= boundaryY.max; nY++) {
-//          for (let nX = boundaryX.min; nX <= boundaryX.max; nX++) {
-//             let neighborCell = this.grid[nY][nX];
-//             if (ManhattanDistance(y, x, nY, nX) <= n && !neighborCell.isNeighbor) {
-//                neighborCell.isNeighbor = true;
-//                neighborCount++;
-//             }
-//          }
-//       }
-//       return neighborCount;
-//    };
-   
-//    analyzeGrid = (matrix, n = N) => {
-//       let positiveCells = []; 
-//       let neighborhood = 0; 
-
-//       const find = (y, x) => {
-//          let neighborCount = 0;
-//          let boundaryY = { min: y - n < 0 ? 0 : y - n, max: y + n > matrix.length ? matrix.length : y + n };
-//          // matrix.slice(boundaryY.min, boundaryY.max + 1).forEach((row, y2) => {
-//          //    let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n > row.length ? row.length : x + n };
-//          //    row.slice(boundaryX.min, boundaryX.max + 1).forEach((cell, x2) => {
-//          //       if (ManhattanDistance(y, x, y2, x2) <= n && !cell.isNeighbor) {
-//          //          cell.isNeighbor = true;
-//          //          neighborCount++;
-//          //       }
-//          //    });
-//          // });
-//          // matrix.slice(boundaryY.min, boundaryY.max + 1).forEach((r,u) => {
-//          //    let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n > r.length ? r.length : x + n };
-//          //    console.log("BB",boundaryY)
-//          //    r.slice(boundaryX.min, boundaryX.max + 1).forEach((c, v)=>{
-//          //       console.log(v, boundaryX)
-//          //    })
-//          // });
-//          for (let nY = boundaryY.min; nY <= boundaryY.max; nY++) {
-//             let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n > matrix[nY].length ? matrix[nY].length : x + n };
-//             for (let nX = boundaryX.min; nX <= boundaryX.max; nX++) {
-//                let neighborCell = matrix[nY][nX];
-//                if (ManhattanDistance(y, x, nY, nX) <= n && !neighborCell.isNeighbor) {
-//                   neighborCell.isNeighbor = true;
-//                   neighborCount++;
-//                }
-//             }
-//          }
-//          return neighborCount;
-//       }
-      
-//       matrix.forEach((row, y) => {
-
-//          row.forEach((cell, x) => {
-//             if (cell.positive) {
-//                cell.isNeighbor = true;
-//                positiveCells.push(cell);
-//                neighborhood++;
-//                neighborhood += find(y, x);
-//             }
-//          });
-//       });
-      
-//       // for (let y = 0; y < this.height; y++) {
-//       //    for (let x = 0; x < this.width; x++) {
-//       //       let cell = this.grid[y][x];
-//       //       if (cell.positive) { 
-//       //          cell.isNeighbor = true;
-//       //          positiveCells.push(cell);
-//       //          neighborhood++;
-//       //          neighborhood += this.findNeighbors(y, x, n);
-//       //       }
-//       //    } 
-//       // }
-
-//       console.log("Positive Cells:", positiveCells);
-//       // console.log(print);
-//       console.log("# of cells in the Neighborhood:", neighborhood);
-
-//    }
-
-//    printGrid = () => {
-//       let output = `${TLC}${HBP.repeat(this.width * 2 + 2)}${TRC}`
-//       for (let y = 0; y < this.height; y++) {
-//          let row = `\n${VBP}`; 
-//          for (let x = 0; x < this.width; x++) {
-//             row += ` ${this.grid[y][x].positive ? HIT : this.grid[y][x].isNeighbor ? NEIGHBOR : MISS}`;
-//          }
-//          // ret += `${row} ║\n${VBP}${" ".repeat(this.width * 2 + 1)}${VBP}`;
-//          output += `${row}${" ".repeat(2)}${VBP}`;
-//       }
-//       output += `\n${BLC}${HBP.repeat(this.width * 2 + 2)}${BRC}`;
-//       return output;
-//    };
-
-//    printCells = () => {
-//       let output = ``;
-//       for (let y = 0; y < this.height; y++) {
-//          let row = `\n`; 
-//          for (let x = 0; x < this.width; x++) {
-//             row += `${this.grid[y][x].value} `;
-//          } 
-//          output += row;
-//       }
-//       return output;
-//    }
-    
-// }
-
-const analyzeGrid = (matrix, n = N) => {
-   let positiveCells = []; 
-   let neighborhood = 0; 
-
+   //    return neighborCount;
+   // }
    const find = (y, x) => {
       let neighborCount = 0;
-      let boundaryY = { min: y - n < 0 ? 0 : y - n, max: y + n >= matrix.length ? matrix.length : y + n + 1};
-      // matrix.slice(boundaryY.min, boundaryY.max).forEach((row, y2) => {
-      //    let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n >= row.length ? row.length : x + n + 1 };
-      //    row.slice(boundaryX.min, boundaryX.max).forEach((cell, x2) => {
-      //       if (ManhattanDistance(y, x, y2, x2) <= n && !cell.isNeighbor) {
-      //          cell.isNeighbor = true;
-      //          neighborCount++;
-      //       }
-      //    });
-      // });
-      // matrix.slice(boundaryY.min, boundaryY.max + 1).forEach((r,u) => {
-      //    let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n > r.length ? r.length : x + n };
-      //    console.log("BB",boundaryY)
-      //    r.slice(boundaryX.min, boundaryX.max + 1).forEach((c, v)=>{
-      //       console.log(v, boundaryX)
-      //    })
-      // });
 
+      for (let dy = -n; dy <= n; dy++) {
+         for (let dx = -n; dx <= n; dx++) {
+            const wrappedY = wrap(y + dy, height);
+            const wrappedX = wrap(x + dx, width);
+            const dist = distanceFunc(y, x, wrappedY, wrappedX, height, width);
 
-      for (let nY = boundaryY.min; nY < boundaryY.max; nY++) {
-         let boundaryX = { min: x - n < 0 ? 0 : x - n, max: x + n >= matrix[nY].length ? matrix[nY].length : x + n + 1 };
-         for (let nX = boundaryX.min; nX < boundaryX.max; nX++) {
-            let neighborCell = matrix[nY][nX];
-            if (ManhattanDistance(y, x, nY, nX) <= n && !neighborCell.isNeighbor) {
-               neighborCell.isNeighbor = true;
-               neighborCount++;
+            if (dist <= n) {
+               let neighborCell = neighborhood[wrappedY][wrappedX];
+               if (!neighborCell.isNeighbor) {
+                  neighborCell.isNeighbor = true;
+                  neighborCount++;
+               }
             }
          }
       }
-
       return neighborCount;
    }
    
-   matrix.forEach((row, y) => {
+   neighborhood.forEach((row, y) => {
       row.forEach((cell, x) => {
          if (cell.positive) {
             if (!cell.isNeighbor) {
                cell.isNeighbor = true;
-               neighborhood++;
+               neighborhoodCount++;
             }
-            positiveCells.push(cell);
-            neighborhood += find(y, x);
+            // positiveCells.push(cell);
+            neighborhoodCount += find(y, x);
          }
       });
    });
    
-   console.log("# of cells in the Neighborhood:", neighborhood);
-
+   console.log(`${distanceFunc.name} # of cells in the Neighborhood:`, neighborhoodCount);
+   if (print) {
+      console.log(PrintNeighborhood(neighborhood));
+   }
+   return neighborhoodCount;
 }
 
-const printGrid = (matrix) => {
-   let output = `${TLC}${HBP.repeat(matrix[0].length * 2 + 2)}${TRC}`
+/**
+ * Prints the neighborhood
+ * 
+ * @param {*} neighborhood 
+ * @returns 
+ */
+function PrintNeighborhood(neighborhood) { 
+   let output = "";
 
-   matrix.forEach((row, y) => {
-      let row_text = `\n${VBP}`; 
-      row.forEach((cell, x) => {
-         row_text += ` ${cell.positive ? HIT :cell.isNeighbor ? NEIGHBOR : MISS}`;
-      })
-      output += `${row_text}${" ".repeat(2)}${VBP}`;
-   })
-   output += `\n${BLC}${HBP.repeat(matrix[0].length * 2 + 2)}${BRC}`;
+   neighborhood.forEach(row => { 
+      let row_text = "";
+      row.forEach(cell => {
+         row_text += `${cell.positive ? HIT :cell.isNeighbor ? NEIGHBOR : MISS} `;
+      }); 
+      output += `${row_text}\n`;
+   }); 
    return output;
-   // for (let y = 0; y < matrix.length; y++) {
-   //    let row = `\n${VBP}`; 
-   //    for (let x = 0; x < matrix[0].length; x++) {
-   //       row += ` ${matrix[y][x].positive ? HIT : matrix[y][x].isNeighbor ? NEIGHBOR : MISS}`;
-   //    }
-   //    // ret += `${row} ║\n${VBP}${" ".repeat(this.width * 2 + 1)}${VBP}`;
-   //    output += `${row}${" ".repeat(2)}${VBP}`;
-   // }
-   // output += `\n${BLC}${HBP.repeat(matrix.length * 2 + 2)}${BRC}`;
-   // return output;
 };
 
+
+// Tests
 const test1 = Object.freeze(makeCells([[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]));
 
 const test2 = Object.freeze(makeCells([[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]));
@@ -357,58 +323,53 @@ const test4 = Object.freeze(makeCells([[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
 
 const test5 = Object.freeze(makeCells([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]));
 
-const test6 = Object.freeze(makeCells([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1]]));
+const test6a = Object.freeze(makeCells([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1]]));
+const test6b = Object.freeze(makeCells([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1]]));
+const test6c = Object.freeze(makeCells([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1]]));
 
 const test7 = Object.freeze(makeCells([[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1]]));
 
-const test00 = Object.freeze(makeCells([[1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1]]));
+const test8 = Object.freeze(makeCells([[1, -1, -1, -1, -1, 1, -1, -1, -1, -1, 1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [1, -1, -1, -1, -1, 1, -1, -1, -1, -1, 1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [1, -1, -1, -1, -1, 1, -1, -1, -1, -1, 1]]));
+
+// FindNeighbors(test1);
+// console.log(PrintNeighborhood(test1))
+
+// FindNeighbors(test2);
+// console.log(PrintNeighborhood(test2))
+
+// FindNeighbors(test3, 2);
+// console.log(PrintNeighborhood(test3))
+
+// FindNeighbors(test4, 2);
+// console.log(PrintNeighborhood(test4))
+
+// FindNeighbors(test5, 6);
+// console.log(PrintNeighborhood(test5))
+
+FindNeighbors(test6a, {distanceType: "e"});
+FindNeighbors(test6b, {distanceType: "c"});
+FindNeighbors(test6c, {distanceType: "m"});
 
 
-// console.log("CELL:", new Cell(-1, 0,0))
-// console.log("TEST:", test4)
-// let m = new Matrix({matrix:test5}); 
-// m.analyzeGrid(m.grid);
-// console.log(m.printGrid()); 
+// console.log(PrintNeighborhood(test6))
 
-analyzeGrid(test1);
-console.log(printGrid(test1))
+// FindNeighbors(test7);
+// console.log(PrintNeighborhood(test7))
 
-analyzeGrid(test2);
-console.log(printGrid(test2))
+// FindNeighbors(test8, 2);
+// console.log(PrintNeighborhood(test8))
 
-analyzeGrid(test3, 2);
-console.log(printGrid(test3))
+// function cell(y, x) {return { y, x }};
 
-analyzeGrid(test4, 2);
-console.log(printGrid(test4))
-
-
-analyzeGrid(test5, 6);
-console.log(printGrid(test5))
-
-analyzeGrid(test00, 9);
-console.log(printGrid(test00))
-
-function cell(y, x) {return { y, x }};
-
-// let mm = MatrixGenerator(5, 5, [
+// let test9 = NeighborhoodGenerator(5, 5, [
 //    cell(1, 0),
 //    cell(3, 4),
 //    cell(4, 3)
 // ]);
 
-let mm = MatrixGenerator(13, 3, "{h:1,yy:1}");
-// console.log(mm)
-// console.log(printGrid(mm))
-
-
-analyzeGrid(mm, 1);
-console.log(printGrid(mm))
-
-
-
-
-
+// FindNeighbors(test9, 1);
+// console.log(PrintNeighborhood(test9))
+ 
 
 
 

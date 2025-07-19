@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountingGridCellNeighbors", "CountingGridCellNeighbors\CountingGridCellNeighbors.csproj", "{1086BE1D-FE44-4AAA-AA4C-1A32CFAFE120}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridViewerCLI", "GridViewerCLI\GridViewerCLI.csproj", "{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{1086BE1D-FE44-4AAA-AA4C-1A32CFAFE120}.Release|x64.Build.0 = Release|Any CPU
 		{1086BE1D-FE44-4AAA-AA4C-1A32CFAFE120}.Release|x86.ActiveCfg = Release|Any CPU
 		{1086BE1D-FE44-4AAA-AA4C-1A32CFAFE120}.Release|x86.Build.0 = Release|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Debug|x64.Build.0 = Debug|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Debug|x86.Build.0 = Debug|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Release|x64.ActiveCfg = Release|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Release|x64.Build.0 = Release|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Release|x86.ActiveCfg = Release|Any CPU
+		{36EADDCB-78DF-4FD0-9E8D-00E29206B1E1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

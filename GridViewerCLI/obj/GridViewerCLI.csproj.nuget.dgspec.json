@@ -121,6 +121,14 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.10, )"
+            },
+            "SixLabors.ImageSharp.Drawing": {
+              "target": "Package",
+              "version": "[2.1.6, )"
+            },
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[9.0.7, )"
